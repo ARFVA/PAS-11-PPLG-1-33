@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pas_mobile_11_pplg_1_33/controllers/favorite_list_controller.dart';
 import 'package:pas_mobile_11_pplg_1_33/controllers/list_api_controller.dart';
 import 'package:pas_mobile_11_pplg_1_33/widgets/custom_card.dart';
 import 'package:pas_mobile_11_pplg_1_33/widgets/custom_loading.dart';
@@ -11,25 +12,22 @@ class ListApiPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ListApiController>();
+    final favController = Get.find<FavoritesController>();
 
     return Scaffold(
       appBar: AppBar(
-        title: const CustomText(
+        title: CustomText(
           text: "Store List",
           size: 20,
           weight: FontWeight.bold,
           color: Colors.white,
         ),
         centerTitle: true,
-        backgroundColor: Color(0xFFE5810F),
+        backgroundColor: const Color(0xFFE5810F),
       ),
-
-      backgroundColor:const Color.fromARGB(255, 243, 215, 184), 
-
+      backgroundColor: const Color.fromARGB(255, 243, 215, 184),
       body: Obx(() {
-        if (controller.isLoading.value) {
-          return const CustomLoading();
-        }
+        if (controller.isLoading.value) return const CustomLoading();
 
         if (controller.storeList.isEmpty) {
           return const Center(
@@ -48,17 +46,20 @@ class ListApiPage extends StatelessWidget {
             itemCount: controller.storeList.length,
             padding: const EdgeInsets.all(10),
             itemBuilder: (context, index) {
-              final store = controller.storeList[index] as Map<String, dynamic>;
-              final imageUrl = store["image"];
-              final title = store["title"];
-              final price = (store["price"] != null) ? (store["price"] as num).toDouble() : null;
-              final category = store["category"] ?? "";
+              final store = controller.storeList[index];
 
-              return CustomCard(
-                imageUrl: imageUrl,
-                title: title,
-                subtitle: "Price: ${price != null ? price.toString() : '-'} | Category: $category",
-              );
+              return Obx(() {
+                return CustomCard(
+                  imageUrl: store["image"] ?? "",
+                  title: store["title"] ?? "No Title",
+                  subtitle:
+                      "Price: ${store["price"] ?? '-'} | Category: ${store["category"] ?? ''}",
+                  isFavorite: favController.isFavorite(store),
+                  onFavorite: () {
+                    favController.toggleFavorite(store);
+                  },
+                );
+              });
             },
           ),
         );

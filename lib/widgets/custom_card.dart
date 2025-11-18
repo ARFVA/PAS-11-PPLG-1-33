@@ -4,12 +4,16 @@ class CustomCard extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String subtitle;
+  final VoidCallback? onFavorite;
+  final bool isFavorite;
 
   const CustomCard({
     super.key,
     required this.imageUrl,
     required this.title,
     required this.subtitle,
+    this.onFavorite,
+    this.isFavorite = false,
   });
 
   @override
@@ -58,22 +62,22 @@ class CustomCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Text(title,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
-                  ),
-                ),
+                Text(subtitle,
+                    style: const TextStyle(
+                        fontSize: 13, color: Colors.black54)),
               ],
+            ),
+          ),
+
+          IconButton(
+            onPressed: onFavorite,
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: Colors.red,
             ),
           )
         ],
