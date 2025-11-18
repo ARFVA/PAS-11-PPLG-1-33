@@ -1,10 +1,10 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-class DBHelper {
-  static final DBHelper _instance = DBHelper._internal();
-  factory DBHelper() => _instance;
-  DBHelper._internal();
+class FavoriteDB {
+  static final FavoriteDB _instance = FavoriteDB._internal();
+  factory FavoriteDB() => _instance;
+  FavoriteDB._internal();
 
   static Database? _db;
 
@@ -16,45 +16,43 @@ class DBHelper {
 
   Future<Database> _initDb() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'contacts.db');
+    final path = join(dbPath, 'favorites.db');
 
     return await openDatabase(
       path,
       version: 1,
       onCreate: (db, version) async {
-        await db.execute(
-          'CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
-        );
+        await db.execute('''
+          CREATE TABLE favorites(
+            id INTEGER PRIMARY KEY,
+            title TEXT,
+            price REAL,
+            category TEXT,
+            image TEXT
+          )
+        ''');
       },
     );
   }
 
-  Future<int> insertName(String name) async {
+  Future<int> addFavorite(Map<String, dynamic> item) async {
     final client = await db;
-    return client.insert('contacts', {'name': name});
+    return client.insert('favorites', {
+      "id": item["id"],
+      "title": item["title"],
+      "price": item["price"],
+      "category": item["category"],
+      "image": item["image"],
+    });
   }
 
-  Future<List<Map<String, dynamic>>> getNames() async {
+  Future<List<Map<String, dynamic>>> getFavorites() async {
     final client = await db;
-    return client.query('contacts', orderBy: 'id DESC');
+    return client.query("favorites", orderBy: "id DESC");
   }
 
-  Future<int> updateName(String oldName, String newName) async {
+  Future<int> deleteFavorite(int id) async {
     final client = await db;
-    return await client.update(
-      'contacts',
-      {'name': newName},
-      where: 'name = ?',
-      whereArgs: [oldName],
-    );
-  }
-
-  Future<int> deleteName(String name) async {
-    final client = await db;
-    return await client.delete(
-      'contacts',
-      where: 'name = ?',
-      whereArgs: [name],
-    );
+    return client.delete("favorites", where: "id = ?", whereArgs: [id]);
   }
 }

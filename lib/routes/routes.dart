@@ -1,5 +1,6 @@
 import 'package:get/route_manager.dart';
-import 'package:pas_mobile_11_pplg_1_33/bindings/login_api_binding%20copy.dart';
+import 'package:pas_mobile_11_pplg_1_33/bindings/favorite_bindings.dart';
+import 'package:pas_mobile_11_pplg_1_33/bindings/list_api_bindings.dart';
 import 'package:pas_mobile_11_pplg_1_33/bindings/login_api_binding.dart';
 import 'package:pas_mobile_11_pplg_1_33/bindings/main_binding.dart';
 import 'package:pas_mobile_11_pplg_1_33/bindings/splashscreen_binding.dart';
@@ -42,7 +43,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.favorite,
       page: () => FavoritePage(),
-      bindings: [ListApibindings()],
+      bindings: [FavoriteBindings()],
     ),
     GetPage(
       name: AppRoutes.listapi,
